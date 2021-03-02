@@ -2,9 +2,9 @@
 Summon All the Minions
 
 ## Summoning 
-Summon a minion for your DAO, give it a name, just 'cause this is a vanilla minion (the OG) doesn't mean it doesn't deserve some spice. 
+Summon a minion for your DAO, give it a name, in this case it is the transmuations minion. 
 
-Summoning a minion is easy. The only arguments the summon function takes are the address of the moloch it will minion for (e.g. it's parent DAO) and a description, which can be a name or other description for this minion's purpose. The summon function emits a SummonMinion event where you can grab the new minion's address.
+Summoning a minion is easy. see Constructor section for info around aurguments.
 
 Details of summoned minions can be looked up in the minions mapping, which will allow you to search by minion address and retrieve information about the minion's description and the Moloch it serves. 
 
@@ -12,7 +12,7 @@ Details of summoned minions can be looked up in the minions mapping, which will 
 
 > "Moloch whose blood is running money!"
 
-Transmutation is a contract that enables the process for HausDAO funding proposals.
+Transmutation is a contract that enables the process for CCO funding proposals.
 The `distributionToken` is slowly traded into the Dao as `capitalToken` is used.
 
 The Transmutation contract holds `distributionToken` (e.g. HAUS) which can only be distributed through Dao proposals (with owner approval to transfer as a fail-safe).
@@ -29,7 +29,7 @@ Members with voting shares can also atomically call `Transmutation.propose` foll
 The expected response to this would be to `guildKick` the proposer from the Dao, but the member would retain their voting shares until the `guildKick` proposal was processed, meaning they could likely perform the same attack a second time immediately after the griefing proposal is processed.
 In short, a rogue Dao member could lock all of the Transmutation contract's `distributionToken` for up to two Dao voting periods.
 
-## Constructor
+## Constructor (Init)
 
     constructor(
         address _moloch,
@@ -64,7 +64,7 @@ if a proposal is made in error this allows any DAO member to cancel it. Avoiding
         string calldata _details
     )
 
-This is a wrapper around the moloch submitProposal function. It will ask for payment in the capitalToken and give tribute in the distributionToken. _details is a param to collect a short desctiption and is substituted with the constant TRANSMUTATION_DETAILS which is used for front ends to display some details about the proposal.
+This is a wrapper around the moloch submitProposal function. It will ask for payment in the capitalToken and give tribute in the distributionToken. _details is a param to collect a short desctiption.
 
 ## Events
 
