@@ -79,9 +79,9 @@ This is a wrapper around the moloch submitProposal function. It will ask for pay
 
 ## Deployments
 
-xDAI - 
+xDAI - 0xf88eaD028100529a540122456A68CA3ca416ccA3
 
-kovan - 
+kovan - 0x235320BEfFB2c3ca8f4b2b428dF7b740009cF16c
 
 rinkeby - 
 

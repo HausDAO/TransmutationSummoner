@@ -111,20 +111,18 @@ contract Transmutation {
      * @dev Constructor
      * @param _moloch The molochDao to propose token swaps with
      * @param _distributionToken The token to use as Moloch proposal tributeToken
-     * @param _getToken The token to use as Moloch proposal paymentToken
+     * @param _capitalToken The token to use as Moloch proposal paymentToken
      * @param _owner Address approved to transfer this contract's _distributionToken
      */
     function init(
         address _moloch,
         address _distributionToken,
-        address _getToken,
+        address _capitalToken,
         address _owner
     ) public {
         moloch = IMOLOCH(_moloch);
-        capitalToken = _getToken;
-        distributionToken = _distributionToken;
 
-        emit Deploy(_moloch, _distributionToken, _getToken, _owner);
+        emit Deploy(_moloch, _distributionToken, _capitalToken, _owner);
 
         // approve moloch and owner to transfer our distributionToken
         require(
@@ -153,10 +151,10 @@ contract Transmutation {
 
     /**
      * @dev Makes a proposal taking tribute from this contract in the form of
-     * distributionToken and sending _getToken to _applicant as proposal payment
-     * @param _applicant Recipient of the proposal's _getToken from the moloch
-     * @param _giveAmt Amount of _distributionToken to swap for _getAmt of _getToken
-     * @param _getAmt Amount of _getToken to swap for _giveAmt of _distributionToken
+     * distributionToken and sending _distributionToken to _applicant as proposal payment
+     * @param _applicant Recipient of the proposal's _distributionToken from the moloch
+     * @param _giveAmt Amount of _distributionToken to swap for _getAmt of _distributionToken
+     * @param _getAmt Amount of _capitalToken to swap for _giveAmt of _distributionToken
      * @param _details Proposal details
      */
     function propose(
@@ -172,7 +170,7 @@ contract Transmutation {
         );
 
         // make a Moloch proposal with _distributionToken as tributeToken and
-        // _getToken as paymentToken
+        // _capitalToken as paymentToken
         uint256 proposalId =
             moloch.submitProposal(
                 _applicant,
@@ -260,11 +258,13 @@ contract TransmutationFactory is CloneFactory {
     address[] public minionList;
     mapping(address => AMinion) public minions;
 
-    event SummonMinion(
-        address indexed minion,
+    event SummonTransmutation(
+        address indexed transmutation,
         address indexed moloch,
+        address indexed owner,
         string details,
-        string minionType
+        address distributionToken,
+        address capitalToken
     );
 
     struct AMinion {
@@ -276,22 +276,28 @@ contract TransmutationFactory is CloneFactory {
         template = _template;
     }
 
-    function summonMinion(
+    function summonTransmutation(
         address moloch,
         string memory details,
         address distributionToken,
         address capitalToken,
         address owner // dao vanilla minion
     ) external returns (address) {
-        Transmutation minion = Transmutation(createClone(template));
+        Transmutation transmutation = Transmutation(createClone(template));
 
-        minion.init(moloch, distributionToken, capitalToken, owner);
-        string memory minionType = "transmutation minion";
+        transmutation.init(moloch, distributionToken, capitalToken, owner);
 
-        minions[address(minion)] = AMinion(moloch, details);
-        minionList.push(address(minion));
-        emit SummonMinion(address(minion), moloch, details, minionType);
+        minions[address(transmutation)] = AMinion(moloch, details);
+        minionList.push(address(transmutation));
+        emit SummonTransmutation(
+            address(transmutation),
+            moloch,
+            owner,
+            details,
+            distributionToken,
+            capitalToken
+        );
 
-        return (address(minion));
+        return (address(transmutation));
     }
 }
