@@ -89,6 +89,7 @@ contract Transmutation {
     IMOLOCH public moloch;
     address public distributionToken;
     address public capitalToken;
+    bool public initialized;
 
     // --- Events ---
     event Propose(uint256 proposalId, address sender);
@@ -120,7 +121,11 @@ contract Transmutation {
         address _capitalToken,
         address _owner
     ) public {
+        require(!initialized, "initialized"); 
         moloch = IMOLOCH(_moloch);
+        distributionToken = _distributionToken;
+        capitalToken = _capitalToken;
+
 
         emit Deploy(_moloch, _distributionToken, _capitalToken, _owner);
 
@@ -133,6 +138,7 @@ contract Transmutation {
             IERC20(_distributionToken).approve(_owner, MAX_UINT),
             "Transmutation::approval-failure"
         );
+        initialized = true; 
     }
 
     // --- Public functions ---
